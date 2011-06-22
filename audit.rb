@@ -122,34 +122,6 @@ def audit_system(serial)
   report(serial, result)
 end
 
-#$ system_profiler SPHardwareDataType
-#Hardware:
-#
-#    Hardware Overview:
-#
-#      Model Name: MacBook Pro
-#      Model Identifier: MacBookPro5,2
-#      Processor Name: Intel Core 2 Duo
-#      Processor Speed: 2.8 GHz
-#      Number Of Processors: 1
-#      Total Number Of Cores: 2
-#      L2 Cache: 6 MB
-#      Memory: 8 GB
-#      Bus Speed: 1.07 GHz
-#      Boot ROM Version: MBP52.
-#      SMC Version (system): 1.42f4
-#      Serial Number (system): W892
-#      Hardware UUID: 62BF
-#      Sudden Motion Sensor:
-#          State: Enabled
-
-#Diagnostics:
-#
-#    Power On Self-Test:
-#
-#      Last Run: 6/1/11 8:20 AM
-#      Result: Passed
-
 # Stovocore
 
 if ARGV.size > 0 then

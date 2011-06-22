@@ -44,12 +44,6 @@ def get_info(url)
   end
 end
 
-#$ system_profiler SPHardwareDataType
-#      Number Of Processors: 1
-#      Total Number Of Cores: 2
-#      L2 Cache: 6 MB
-#      Bus Speed: 1.07 GHz
-
 #$ system_profiler SPDiagnosticsDataType
 #      Last Run: 6/1/11 8:20 AM
 #      Result: Passed
@@ -66,8 +60,14 @@ def report(serial, result)
 
   model_id = hardware_info_short("Model Identifier")
   ram = hardware_info_long("Memory")
+  l2_cache = hardware_info_long("L2 Cache")
   proc_name = hardware_info_long("Processor Name")
   proc_speed = hardware_info_long("Processor Speed")
+  proc_count = hardware_info_short("Number Of Processors")
+  proc_cores = hardware_info_short("Total Number Of Cores")
+  bus_speed = hardware_info_long("Bus Speed")
+  smc_version = hardware_info_short("SMC Version")
+  boot_rom = hardware_info_short("Boot ROM Version")
   hardware_uuid = hardware_info_long("Hardware UUID")
 
   puts   "Serial Number:    " + result["SERIAL_ID"]
@@ -76,7 +76,13 @@ def report(serial, result)
   puts   "Model ID:         " + model_id
   puts   "Processor Name:   " + proc_name
   puts   "Processor Speed:  " + proc_speed
+  puts   "Processor Count:  " + proc_count
+  puts   "Processor Cores:  " + proc_cores
   puts   "Installed RAM:    " + ram
+  puts   "L2 Cache:         " + l2_cache
+  puts   "Bus Speed:        " + bus_speed
+  puts   "SMC Version:      " + smc_version
+  puts   "Boot ROM:         " + boot_rom
   puts   "Purchased on:     " + result["PURCHASE_DATE"]
 
   if ( result["HW_HAS_COVERAGE"] == "Y" ) then

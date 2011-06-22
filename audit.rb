@@ -1,14 +1,21 @@
 #!/usr/bin/ruby
 
-# based on http://glarizza.posterous.com/43331766
+# Utility script to parse local serial number and determine available AppleCare
+# While we are at it, do some basic hardware auditing
+# Gather it all up and send audit info to a HTTP(s) cache
+
+# Puppet clues: sudo /usr/bin/gem install yajl-ruby
+
+# Based on work from http://glarizza.posterous.com/43331766
 
 require 'open-uri'
 require 'openssl'
 require 'timeout'
+# require 'uri'
 require 'rubygems'
 require 'yajl'
 
-# methos from methudium
+# Methudium
 
 def get_serial
   %x(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}').upcase.chomp
@@ -37,16 +44,38 @@ def get_info(url)
   end
 end
 
+#$ system_profiler SPHardwareDataType
+#      Number Of Processors: 1
+#      Total Number Of Cores: 2
+#      L2 Cache: 6 MB
+#      Bus Speed: 1.07 GHz
+
+#$ system_profiler SPDiagnosticsDataType
+#      Last Run: 6/1/11 8:20 AM
+#      Result: Passed
+
+def hardware_info_short(query)
+  %x(system_profiler SPHardwareDataType | awk -F': ' '/#{query}/ {print $2}').chomp
+end
+
+def hardware_info_long(query)
+  %x(system_profiler SPHardwareDataType | awk -F': ' '/#{query}/ {print $2,$3,$4}').chomp
+end
+
 def report(serial, result)
 
-  model_id = %x(system_profiler SPHardwareDataType | awk -F': ' '/Model Identifier/ {print $2}').chomp
-
-  ram = %x(system_profiler SPHardwareDataType | awk -F': ' '/Memory/ {print $2,$3}').chomp
-
+  model_id = hardware_info_short("Model Identifier")
+  ram = hardware_info_long("Memory")
+  proc_name = hardware_info_long("Processor Name")
+  proc_speed = hardware_info_long("Processor Speed")
+  hardware_uuid = hardware_info_long("Hardware UUID")
 
   puts   "Serial Number:    " + result["SERIAL_ID"]
+  puts   "Hardware UUID:    " + hardware_uuid
   puts   "Model Type:       " + result["PROD_DESCR"]
   puts   "Model ID:         " + model_id
+  puts   "Processor Name:   " + proc_name
+  puts   "Processor Speed:  " + proc_speed
   puts   "Installed RAM:    " + ram
   puts   "Purchased on:     " + result["PURCHASE_DATE"]
 
@@ -60,29 +89,38 @@ def report(serial, result)
   end
 
   network_info
+
+  # TODO: send the info upstream
+
+  # url = "http://some.tld/?serial=sn&what=what"
+  # URI.escape(url)
+end
+
+def get_ip4addr(int)
+  %x(ifconfig #{int} | awk '/inet / {print $2}').upcase.chomp
+end
+
+def get_macaddr(int)
+  %x(ifconfig #{int} | awk '/ether/ {print $2}').upcase.chomp
 end
 
 def network_info
-  eth_mac = %x(ifconfig en0 | awk '/ether/ {print $2}').upcase.chomp
-  eth_ip  = %x(ifconfig en0 | awk '/inet / {print $2}').upcase.chomp
-  air_mac = %x(ifconfig en1 | awk '/ether/ {print $2}').upcase.chomp
-  air_ip  = %x(ifconfig en1 | awk '/inet / {print $2}').upcase.chomp
+  eth_mac = get_macaddr("en0")
+  eth_ip4 = get_ip4addr("en0")
+  air_mac = get_macaddr("en1")
+  air_ip4 = get_ip4addr("en1")
 
   puts   "Airport MAC:      " + air_mac
-  puts   "Airport IPADDR:   " + air_ip
+  puts   "Airport Ip4Addr:  " + air_ip4
 
   puts   "Eth MAC:          " + eth_mac
-  puts   "Eth IPADDR:       " + eth_ip
+  puts   "Eth Ip4Addr:      " + eth_ip4
 end
 
 def audit_system(serial)
   result = get_info(gen_url(serial))
   report(serial, result)
 end
-
-# sudo /usr/bin/gem install yajl-ruby
-
-# yeah there is some code duplication here. need to meta-abstract it out laterz
 
 #$ system_profiler SPHardwareDataType
 #Hardware:
@@ -121,7 +159,3 @@ if ARGV.size > 0 then
 else
   audit_system(get_serial)
 end
-
-# require 'uri'
-# url = "http://some.tld/?serial=sn&what=what"
-# URI.escape(url)

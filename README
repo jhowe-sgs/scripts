@@ -1,0 +1,16 @@
+2011.06.22
+
+scripts/
+
+audit.rb  A script evolved from a Puppet master. Added auditing capabilities
+          that I will send to a caching HTTP service. I collect MAC addrs
+          since my DHCP maps static IPs to MACs to trace transparent proxy
+          traffic
+
+scripts/win2003sbs/
+
+*.bat     Legacy domain login scripts I need to migrate to Windows 2008r2
+
+Qapla'
+
+http://www.youtube.com/watch?v=LcOsw-dhCos

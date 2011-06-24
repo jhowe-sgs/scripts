@@ -13,17 +13,19 @@ if [ ${EUID} -ne 0 ]; then
 fi
 
 echo
-echo "Files: Killing it..."
-find /Applications -type f -exec xattr -d com.apple.quarantine {} \;
+echo "Apps: Killing it..."
+xattr -d -r com.apple.quarantine /Applications
 
 echo
-echo "Dirs: Killing it..."
-find /Applications -type d -exec xattr -d com.apple.quarantine {} \;
+echo "Downloads: Cleaning it..."
+xattr -d -r com.apple.quarantine ~/Downloads
 
 echo
 echo "Defaults: Setting it..."
 defaults write com.apple.LaunchServices LSQuarantine -bool NO
 
 echo
+echo "Shhh, my darling"
 echo "Dead men tell no tales"
+echo
 reboot

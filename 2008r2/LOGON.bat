@@ -1,16 +1,25 @@
-REM @ECHO OFF
-REM NET USE * /delete /y
-REM
+@ECHO OFF
+NET USE * /delete /y
 
-REM http://clintboessen.blogspot.com/2011/02/ifmemberexe-doesnt-work-windows.html
+@ECHO **************************************************************************
+@ECHO *                                                                        *
+@ECHO * Mapping SGS Network Drives. Please do not close this window.           *
+@ECHO * This window will automatically close when mapping is completed.        *
+@ECHO *                                                                        *
+@ECHO **************************************************************************
 
 :PUBLIC
 
 NET USER /domain %username% | find "Public Shares"
-IF NOT ERRORLEVEL = 1 (
+IF NOT ERRORLEVEL 1 (
   NET USE P: \\LAKSHMI\public
 )
 
-GOTO END
+:QUICKBOOKS
+
+NET USER /domain %username% | find "Quickbooks Shares"
+IF NOT ERRORLEVEL 1 (
+  NET USE P: \\YEMOJA\quickbooks
+)
 
 :END

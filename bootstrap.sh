@@ -8,3 +8,4 @@ if [ ${EUID} -ne 0 ]; then
   exit 1
 fi
 /usr/bin/gem install *.gem
+./audit.rb

@@ -135,13 +135,15 @@ def report(serial, result)
 
   # url = "http://audit-host/Model-ID/SN/Hardware-UUID/Air-MAC/Eth-MAC/hostname
   begin
-    open( prep_url( model_id, result["SERIAL_ID"], hardware_uuid ) )
+    audit_url = prep_url( model_id, result["SERIAL_ID"], hardware_uuid, batt_cycle_count, batt_charge_capacity )
+    open( audit_url )
+    puts "Sent report to #{audit_url}"
   rescue Timeout::Error
     puts "Timeout::Error: #{$!}"
     exit
   rescue OpenURI::HTTPError => the_error
     puts "Something wicked this way went!"
-    puts "  URL: " + prep_url( model_id, result["SERIAL_ID"], hardware_uuid )
+    puts "  URL: #{audit_url}"
     puts "  Had a bad status: #{the_error.message}"
     exit
   rescue
@@ -150,8 +152,8 @@ def report(serial, result)
   end
 end
 
-def prep_url(model_id, serial, uuid)
-  "#{$audit_host}/#{model_id}/#{serial}/#{uuid}/#{$air_mac}/#{$eth_mac}/#{$hostname}"
+def prep_url(model_id, serial, uuid, batt_cycles, batt_capacity)
+  "#{$audit_host}/#{model_id}/#{serial}/#{uuid}/#{$air_mac}/#{$eth_mac}/#{$hostname}/#{batt_cycles}/#{batt_capacity}"
 end
 
 def get_ip4addr(int)

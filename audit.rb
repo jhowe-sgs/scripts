@@ -16,6 +16,12 @@ require 'rubygems'
 require 'yajl'
 require 'colored'
 
+# Global domination
+$air_mac
+$eth_mac
+$hostname=%x(hostname).chomp
+$audit_host="http://audit.seattlegirlsschool.org"
+
 # Methudium
 
 def get_serial
@@ -50,19 +56,19 @@ end
 #      Result: Passed
 
 def hardware_info_short(query)
-  %x(system_profiler SPHardwareDataType | awk -F': ' '/#{query}/ {print $2}').chomp
+  %x(system_profiler SPHardwareDataType | awk -F': ' '/#{query}/ {print $2}').chomp.rstrip
 end
 
 def hardware_info_long(query)
-  %x(system_profiler SPHardwareDataType | awk -F': ' '/#{query}/ {print $2,$3,$4}').chomp
+  %x(system_profiler SPHardwareDataType | awk -F': ' '/#{query}/ {print $2,$3,$4}').chomp.rstrip
 end
 
 def battery_info_short(query)
-  %x(system_profiler SPPowerDataType | awk -F': ' '/#{query}/ {print $2}').chomp
+  %x(system_profiler SPPowerDataType | awk -F': ' '/#{query}/ {print $2}').chomp.rstrip
 end
 
 def battery_info_long(query)
-  %x(system_profiler SPPowerDataType | awk -F': ' '/#{query}/ {print $2,$3,$4}').chomp
+  %x(system_profiler SPPowerDataType | awk -F': ' '/#{query}/ {print $2,$3,$4}').chomp.rstrip
 end
 
 def report(serial, result)
@@ -80,7 +86,7 @@ def report(serial, result)
   hardware_uuid = hardware_info_long("Hardware UUID")
 
   batt_cycle_count = battery_info_short("Cycle count")
-  batt_condition = battery_info_long("Condition").rstrip
+  batt_condition = battery_info_long("Condition")
   batt_charge_remaining = battery_info_short("Charge remaining")
   batt_charge_capacity = battery_info_short("Full charge capacity")
 
@@ -127,10 +133,25 @@ def report(serial, result)
 
   network_info
 
-  # TODO: send the info upstream
+  # url = "http://audit-host/Model-ID/SN/Hardware-UUID/Air-MAC/Eth-MAC/hostname
+  begin
+    open( prep_url( model_id, result["SERIAL_ID"], hardware_uuid ) )
+  rescue Timeout::Error
+    puts "Timeout::Error: #{$!}"
+    exit
+  rescue OpenURI::HTTPError => the_error
+    puts "Something wicked this way went!"
+    puts "  URL: " + prep_url( model_id, result["SERIAL_ID"], hardware_uuid )
+    puts "  Had a bad status: #{the_error.message}"
+    exit
+  rescue
+    puts "Network connection failed: #{$!}"
+    exit
+  end
+end
 
-  # url = "http://some.tld/?serial=sn&what=what"
-  # URI.escape(url)
+def prep_url(model_id, serial, uuid)
+  "#{$audit_host}/#{model_id}/#{serial}/#{uuid}/#{$air_mac}/#{$eth_mac}/#{$hostname}"
 end
 
 def get_ip4addr(int)
@@ -142,15 +163,15 @@ def get_macaddr(int)
 end
 
 def network_info
-  eth_mac = get_macaddr("en0")
+  $eth_mac = get_macaddr("en0")
   eth_ip4 = get_ip4addr("en0")
-  air_mac = get_macaddr("en1")
+  $air_mac = get_macaddr("en1")
   air_ip4 = get_ip4addr("en1")
 
-  puts   "Airport MAC:      " + air_mac
+  puts   "Airport MAC:      " + $air_mac
   puts   "Airport Ip4Addr:  " + air_ip4
 
-  puts   "Eth MAC:          " + eth_mac
+  puts   "Eth MAC:          " + $eth_mac
   puts   "Eth Ip4Addr:      " + eth_ip4
 end
 

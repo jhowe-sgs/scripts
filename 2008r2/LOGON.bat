@@ -19,7 +19,7 @@ IF NOT ERRORLEVEL 1 (
 
 NET USER /domain %username% | find "Quickbooks Shares"
 IF NOT ERRORLEVEL 1 (
-  NET USE P: \\YEMOJA\quickbooks
+  NET USE Q: \\YEMOJA\quickbooks
 )
 
 :BUSINESS
@@ -47,21 +47,21 @@ IF NOT ERRORLEVEL 1 (
 
 NET USER /domain %username% | find "Admissions Shares"
 IF NOT ERRORLEVEL 1 (
-  NET USE X: \\LAKSHMI\admissions
+  NET USE M: \\LAKSHMI\admissions
 )
 
 :DEVELOPMENT
 
 NET USER /domain %username% | find "Development Shares"
 IF NOT ERRORLEVEL 1 (
-  NET USE X: \\LAKSHMI\development
+  NET USE V: \\LAKSHMI\development
 )
 
 :LEADERSHIP
 
 NET USER /domain %username% | find "Leadership Shares"
 IF NOT ERRORLEVEL 1 (
-  NET USE X: \\LAKSHMI\leadership
+  NET USE L: \\LAKSHMI\leadership
 )
 
 :FACULTY

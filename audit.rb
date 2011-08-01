@@ -19,7 +19,7 @@ require 'colored'
 # Global domination
 $air_mac
 $eth_mac
-$hostname=%x(hostname).chomp
+$hostname=%x(scutil --get LocalHostName).chomp
 $audit_host="http://audit.seattlegirlsschool.org"
 
 # Methudium

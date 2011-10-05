@@ -1,0 +1,4 @@
+sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
+sudo mdutil -a -i on
+sudo chmod 777 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
+killall SystemUIServer

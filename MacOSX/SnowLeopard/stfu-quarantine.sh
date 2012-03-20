@@ -28,4 +28,4 @@ echo
 echo "Shhh, my darling"
 echo "Dead men tell no tales"
 echo
-reboot
+# reboot

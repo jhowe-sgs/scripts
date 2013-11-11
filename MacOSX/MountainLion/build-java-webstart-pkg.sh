@@ -5,3 +5,5 @@ http://www.wikihow.com/Make-a-DMG-File-on-a-Mac
 http://macops.ca/flat-packages-persisting-obsolescence/
 
 sudo pkgbuild --version 2013100801 --identifier org.seattlegirlsschool.enable_java_webstart --nopayload --scripts /Users/serveradmin/Desktop/github/scripts/MacOSX/MountainLion/Enable_Java_Webstart/scripts "/Users/serveradmin/Desktop/Enable Java Webstart.pkg"
+
+sudo pkgbuild --version 2013102101 --identifier org.seattlegirlsschool.enable_java_webstart --install-location /Applications --component /Users/serveradmin/Desktop/Enable_Java_Webstart.app --scripts /Users/serveradmin/Desktop/github/scripts/MacOSX/MountainLion/Enable_Java_Webstart/scripts "/Users/serveradmin/Desktop/Enable Java Webstart.pkg"

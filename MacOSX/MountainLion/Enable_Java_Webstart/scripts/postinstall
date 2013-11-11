@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Checks for backup directory for Java 7 plug-in
+# and creates it if needed.
+
+if [ ! -d "/Library/Internet Plug-Ins (Disabled)" ]; then
+  echo "Making Backup Directory"
+  mkdir "/Library/Internet Plug-Ins (Disabled)"
+  chown -R root:wheel "/Library/Internet Plug-Ins (Disabled)"
+fi
+
+# Test to see if an existing symlink is in place first
+
+if [ -L "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin" ]; then
+  echo "Found existing JavaAppletPlugin symlink"
+  cd /Library/Internet\ Plug-Ins
+  JP_FOUND=`ls -al JavaAppletPlugin.plugin | awk '{print $11}'`
+  JP_WANTED="/System/Library/Java/Support/Deploy.bundle/Contents/Resources/JavaPlugin2_NPAPI.plugin"
+  if [ "${JP_FOUND}" != "${JP_WANTED}" ]; then
+    echo "Java Plugin mismatch found, fixing..."
+    rm JavaAppletPlugin.plugin
+    ln -s ${JP_WANTED} /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin
+  else
+    echo "Proper Java Plugin link found."
+  fi
+  
+  # If a previous version of the Java 7 plug-in is already 
+  # in the backup directory, the previously backed up Java 7 
+  # plug-in is removed.
+
+else
+  if [ -d "/Library/Internet Plug-Ins (Disabled)/JavaAppletPlugin.plugin" ]; then
+    echo "Removing stale plugin in back-up directory."
+    rm -rf "/Library/Internet Plug-Ins (Disabled)/JavaAppletPlugin.plugin"
+  fi
+
+  # Moves current Java 7 plug-in to the backup directory
+
+  if [ -d "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin" ]; then
+    echo "Archiving current Java Plugin."
+    mv "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin" "/Library/Internet Plug-Ins (Disabled)/JavaAppletPlugin.plugin"
+  fi
+
+  # Create symlink to the Apple Java 6 plug-in in
+  # /Library/Internet Plug-Ins 
+
+  echo "Recreating Java Plugin symlink."
+  ln -sf "/System/Library/Java/Support/Deploy.bundle/Contents/Resources/JavaPlugin2_NPAPI.plugin" "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin"
+fi
+
+# Re-enable Java SE 6 Web Start, which allows Java 
+# applets to run in web browsers
+
+#ln -sf "/System/Library/Frameworks/JavaVM.framework/Commands/javaws" "/usr/bin/javaws"
+
+if [ -L "/usr/bin/javaws" ]; then
+  echo "Found existing Java Webstart symlink"
+  JWS_FOUND=`ls -al /usr/bin/javaws | awk '{print $11}'`
+  JWS_WANTED="/System/Library/Frameworks/JavaVM.framework/Commands/javaws"
+  if [ "${JWS_FOUND}" != "${JWS_WANTED}" ]; then
+    echo "Java Webstart mismatch found, fixing..."
+    rm /usr/bin/javaws
+    ln -s ${JWS_WANTED} /usr/bin/javaws
+  else
+    echo "Proper Java Webstart link found."
+  fi
+fi
+
+#
+# Check to see if Xprotect is blocking our current JVM build and reenable if it is
+# Changes in this section are from Pepijn Bruienne's fork of this script: https://github.com/bruienne
+#
+
+if [[ -e "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/XProtect.meta.plist" ]]; then
+
+  CURRENT_JAVA_BUILD=`/usr/libexec/PlistBuddy -c "print :JavaVM:JVMVersion" "/Library/Java/Home/bundle/Info.plist"`
+  XPROTECT_JAVA_BUILD=`/usr/libexec/PlistBuddy -c "print :JavaWebComponentVersionMinimum" "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/XProtect.meta.plist"`
+
+  if [ ${CURRENT_JAVA_BUILD: -3} -lt ${XPROTECT_JAVA_BUILD: -3} ]; then
+    logger "Current JavaVM build (${CURRENT_JAVA_BUILD: -3}) is less than the minimum build required by Xprotect (${XPROTECT_JAVA_BUILD: -3}), reenabling."
+    defaults write "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/XProtect.meta.plist" JavaWebComponentVersionMinimum -string "$CURRENT_JAVA_BUILD"
+  else
+    logger "Current JVM build is ${CURRENT_JAVA_BUILD: -3} and Xprotect minimum build is ${XPROTECT_JAVA_BUILD: -3}, nothing to do here."
+  fi
+else
+  logger "Xprotect not found, skipping."
+fi
+
+echo "All patches applied."
+echo "Please restart your web browser and test for java access."
+
+exit 0

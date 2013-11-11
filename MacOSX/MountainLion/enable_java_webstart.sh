@@ -1,0 +1,1 @@
+Enable_Java_Webstart/scripts/postinstall

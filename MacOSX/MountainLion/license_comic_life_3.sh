@@ -1,0 +1,1 @@
+License_Comic_Life_3/scripts/postinstall

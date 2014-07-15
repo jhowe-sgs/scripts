@@ -1,0 +1,1 @@
+hash = YAML.load(File.read("file_path"))

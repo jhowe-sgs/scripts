@@ -1,0 +1,6 @@
+#!/bin/bash
+
+TARGET="/Applications/Kindle.app"
+if [ -d ${TARGET} ]; then
+	sudo rm -rf ${TARGET}
+fi

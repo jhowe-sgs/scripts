@@ -1,0 +1,6 @@
+#!/bin/bash
+
+TARGET="/Applications/Battery Health.app"
+if [ -d "${TARGET}" ]; then
+	sudo rm -rf "${TARGET}"
+fi

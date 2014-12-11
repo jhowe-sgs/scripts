@@ -1,0 +1,13 @@
+#!/bin/bash
+
+APP_DIR=/Applications/PCClient.app
+RESOURCE_DIR=${APP_DIR}/Contents/Resources
+REMOVE_HOOK=${RESOURCE_DIR}/delete-login-hook.command
+PCCLIENT_CONFIG=${RESOURCE_DIR}/config.properties
+
+if [ -d ${APP_DIR} ]; then
+	sudo $REMOVE_HOOK
+	sudo perl -pi -e 's/^#silent/silent/g' $PCCLIENT_CONFIG
+	sudo perl -pi -e 's/^#minimized/minimized/g' $PCCLIENT_CONFIG
+	sudo perl -pi -e 's/^#neverrequestidentity/neverrequestidentity/g' $PCCLIENT_CONFIG
+fi

@@ -1,0 +1,1 @@
+http://wiki.cacert.org/FAQ/ImportRootCert?action=show&redirect=ImportRootCert

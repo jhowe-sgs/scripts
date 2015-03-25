@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# Based on work by: (c) 2010 Walter Meyer SUNY Purchase College
+
+# Script to install and setup printers on a Mac OS X system 
+# in a "Munki-Friendly" way.
+
+# Make sure to install the required PPD drivers first!
+
+# Globals
+PPD_DIR="/Library/Printers/PPDs/Contents/Resources"
+DEPLOY_DIR="/private/etc/cups/printers_deployment"
+UNINST_DIR="${DEPLOY_DIR}/uninstalls"
+
+LPSTAT=/usr/bin/lpstat
+LPADMIN=/usr/sbin/lpadmin
+
+# Variables.
+PRINTER_NAME="CMR_HP_LaserJet_4000_PCL_6"
+LOCATION="Community Meeting Room North"
+GUI_DISPLAY_NAME="CMR_HP_LaserJet_4000_PCL_6"
+ADDRESS="lpd://10.0.0.2/CMR_HP_LaserJet_4000_PCL_6"
+DRIVER_PPD="${PPD_DIR}/HP LaserJet 4000 Series.gz"
+
+# Populate these options if you want to set specific options for the printer. 
+# E.g. duplexing installed, etc.
+OPTION_1="HPOption_PaperPolicy=NearestSizeAdjust"
+OPTION_2="InstalledMemory=12MB"
+OPTION_3=""
+
+### Printer Install ###
+
+# Nuke all existing mcx* printers
+${LPSTAT} -p | grep ^printer | awk '{print $2}' | grep mcx | \
+while read PRINTER; do
+        ${LPADMIN} -x ${PRINTER}
+done
+	
+# Disable sharing on any remaining printers
+${LPSTAT} -p | grep ^printer | awk '{print $2}' | \
+while read PRINTER; do
+        ${LPADMIN} -p ${PRINTER} -o printer-is-shared=false
+done
+
+# In case we are making changes to a printer 
+# we need to remove an existing queue if it exists.
+
+${LPSTAT} -p ${PRINTER_NAME}
+if [ $? -eq 0 ]; then
+        ${LPADMIN} -x ${PRINTER_NAME}
+fi
+
+# Now we can install the printer.
+${LPADMIN} \
+        -p "${PRINTER_NAME}" \
+        -L "${LOCATION}" \
+        -D "${GUI_DISPLAY_NAME}" \
+        -v "${ADDRESS}" \
+        -P "${DRIVER_PPD}" \
+        -o "${OPTION_1}" \
+        -o "${OPTION_2}" \
+        -o "${OPTION_3}" \
+        -o printer-is-shared=false \
+        -E
+
+# Create an uninstall script for the printer.
+
+UNINSTALL_SCRIPT="${UNINST_DIR}/${PRINTER_NAME}.sh"
+
+if [ ! -d ${UNINST_DIR} ]; then
+        mkdir -p ${UNINST_DIR}
+fi
+
+echo "#!/bin/sh" > "${UNINSTALL_SCRIPT}"
+echo "${LPADMIN} -x ${PRINTER_NAME}" >> "${UNINSTALL_SCRIPT}"
+echo "/usr/bin/srm ${UNINST_DIR}/${PRINTER_NAME}.sh" >> "${UNINSTALL_SCRIPT}"
+
+chmod 0750 ${UNINSTALL_SCRIPT}
+
+# Permission the directories properly.
+chown -R root:_lp ${DEPLOY_DIR}
+chmod -R 700 ${DEPLOY_DIR}
+
+exit 0

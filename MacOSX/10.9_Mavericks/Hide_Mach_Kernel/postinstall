@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ -e /mach_kernel ]; then
+  if ! /bin/ls -lO /mach_kernel | grep hidden > /dev/null; then
+    echo "Un-hidden /mach_kernel found, hiding"
+    /usr/bin/chflags hidden /mach_kernel
+  fi
+fi

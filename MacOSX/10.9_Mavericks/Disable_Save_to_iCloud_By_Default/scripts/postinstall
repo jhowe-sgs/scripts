@@ -1,0 +1,6 @@
+#!/bin/bash
+# don't use iCloud as the default location in save dialogs
+defaults write -g NSDocumentSaveNewDocumentsToCloud -bool false
+
+# don't show an iCloud-centric open panel when opening an application that supports syncing documents and data
+defaults write -g NSShowAppCentricOpenPanelInsteadOfUntitledFile -bool false

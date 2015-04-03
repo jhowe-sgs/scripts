@@ -3,5 +3,6 @@
 *.swo
 *.DS_Store
 MacOSX/10.8_Mountain_Lion/License_Comic_Life_3/scripts/postinstall
+MacOSX/10.9_Mavericks/SUS
 *.dmg
 *.pkg

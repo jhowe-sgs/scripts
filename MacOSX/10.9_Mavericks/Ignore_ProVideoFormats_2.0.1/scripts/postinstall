@@ -1,0 +1,3 @@
+#!/bin/sh
+# This silences prompts for 031-21806; ProVideoFormats-2.0.1
+/usr/sbin/softwareupdate --ignore 031-21806

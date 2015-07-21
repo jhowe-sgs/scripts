@@ -1,0 +1,9 @@
+#!/bin/bash
+
+TARGET="/etc/cups/printers_deployment/uninstalls"
+if [ -d "${TARGET}" ]; then
+	INSTALLED_PRINTERS=`ls [A-Z0-9]*.sh`
+	for UNINSTALL_PRINTER in ${INSTALLED_PRINTERS}; do
+		sudo ${TARGET}/${UNINSTALL_PRINTER}
+	done
+fi

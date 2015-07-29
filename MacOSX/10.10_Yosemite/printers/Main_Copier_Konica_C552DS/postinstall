@@ -28,6 +28,7 @@ OPTION_1="Finisher=FS527Donau12"
 OPTION_2="KMPunchUnit=PK517-23Donau12"
 OPTION_3="PrinterHDD=True"
 OPTION_4="SelectColor=Grayscale"
+OPTION_5="ColorModel=Gray"
 
 ### Printer Install ###
 
@@ -46,7 +47,7 @@ done
 # In case we are making changes to a printer 
 # we need to remove an existing queue if it exists.
 
-${LPSTAT} -p ${PRINTER_NAME}
+${LPSTAT} -p ${PRINTER_NAME} 2>/dev/null
 if [ $? -eq 0 ]; then
         ${LPADMIN} -x ${PRINTER_NAME}
 fi
@@ -62,6 +63,7 @@ ${LPADMIN} \
         -o "${OPTION_2}" \
         -o "${OPTION_3}" \
 	-o "${OPTION_4}" \
+	-o "${OPTION_5}" \
         -o printer-is-shared=false \
         -E
 

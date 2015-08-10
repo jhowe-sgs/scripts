@@ -19,7 +19,7 @@ LPADMIN=/usr/sbin/lpadmin
 PRINTER_NAME="Advancement_Office_Xerox_Phaser_6180DN_PS"
 LOCATION="Advancement Office"
 GUI_DISPLAY_NAME="Advancement_Office_Xerox_Phaser_6180DN_PS"
-ADDRESS="lpd://10.0.0.19/Advancement_Office_Xerox_Phaser_6180DN_PS"
+ADDRESS="lpd://10.0.0.2/Advancement_Office_Xerox_Phaser_6180DN_PS"
 DRIVER_PPD="${PPD_DIR}/Xerox Phaser 6180DN.gz"
 
 # Populate these options if you want to set specific options for the printer. 

@@ -6,4 +6,4 @@ include /usr/local/share/luggage/luggage.make
 TITLE=SGS_Printer_Main_Copier_Konica_C552DS
 REVERSE_DOMAIN=org.seattlegirlsschool
 PAYLOAD=pack-script-postinstall
-PACKAGE_VERSION=2015.08.01.12.10
+PACKAGE_VERSION=2015.08.09.11.46

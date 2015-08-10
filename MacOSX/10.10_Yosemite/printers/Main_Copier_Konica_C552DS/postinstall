@@ -19,7 +19,7 @@ LPADMIN=/usr/sbin/lpadmin
 PRINTER_NAME="Main_Copier_Konica_C552DS"
 LOCATION="Main Copy Room"
 GUI_DISPLAY_NAME="Main_Copier_Konica_C552DS"
-ADDRESS="lpd://10.0.0.19/Main_Copier_Konica_C552DS"
+ADDRESS="lpd://10.0.0.2/Main_Copier_Konica_C552DS"
 DRIVER_PPD="${PPD_DIR}/KONICAMINOLTAC552DS.gz"
 
 # Populate these options if you want to set specific options for the printer. 

@@ -16,20 +16,17 @@ LPSTAT=/usr/bin/lpstat
 LPADMIN=/usr/sbin/lpadmin
 
 # Variables.
-PRINTER_NAME="Main_Copier_Konica_C552DS"
-LOCATION="Main Copy Room"
-GUI_DISPLAY_NAME="Main_Copier_Konica_C552DS"
-ADDRESS="lpd://10.0.0.2/Main_Copier_Konica_C552DS"
-DRIVER_PPD="${PPD_DIR}/KONICAMINOLTAC552DS.gz"
+PRINTER_NAME="Art_Room_HP_LaserJet_4300"
+LOCATION="Art Room"
+GUI_DISPLAY_NAME="Art_Room_HP_LaserJet_4300"
+ADDRESS="lpd://10.0.0.2/Art_Room_HP_LaserJet_4300"
+DRIVER_PPD="${PPD_DIR}/hp LaserJet 4300 Series.gz"
 
 # Populate these options if you want to set specific options for the printer. 
 # E.g. duplexing installed, etc.
-OPTION_1="Finisher=FS527Donau12"
-OPTION_2="KMPunchUnit=PK517-23Donau12"
-OPTION_3="PrinterHDD=True"
-OPTION_4="SelectColor=Grayscale"
-OPTION_5="ColorModel=Gray"
-OPTION_6="KMDuplex=Single"
+OPTION_1="InstalledMemory=Mem2"
+OPTION_2="HPPaperPolicy=NearestSizeAdjust"
+OPTION_3=""
 
 ### Printer Install ###
 
@@ -48,7 +45,7 @@ done
 # In case we are making changes to a printer 
 # we need to remove an existing queue if it exists.
 
-${LPSTAT} -p ${PRINTER_NAME} 2>/dev/null
+${LPSTAT} -p ${PRINTER_NAME}
 if [ $? -eq 0 ]; then
         ${LPADMIN} -x ${PRINTER_NAME}
 fi
@@ -63,9 +60,6 @@ ${LPADMIN} \
         -o "${OPTION_1}" \
         -o "${OPTION_2}" \
         -o "${OPTION_3}" \
-	-o "${OPTION_4}" \
-	-o "${OPTION_5}" \
-	-o "${OPTION_6}" \
         -o printer-is-shared=false \
         -E
 

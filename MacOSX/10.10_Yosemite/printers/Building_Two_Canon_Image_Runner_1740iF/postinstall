@@ -25,7 +25,7 @@ DRIVER_PPD="${PPD_DIR}/CNMCIR1730S2.ppd.gz"
 # Populate these options if you want to set specific options for the printer. 
 # E.g. duplexing installed, etc.
 OPTION_1="CNFinisher=STFINH1"
-OPTION_2=""
+OPTION_2="PageSize=Letter"
 OPTION_3=""
 
 ### Printer Install ###

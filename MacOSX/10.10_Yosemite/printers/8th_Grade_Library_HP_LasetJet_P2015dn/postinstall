@@ -16,18 +16,17 @@ LPSTAT=/usr/bin/lpstat
 LPADMIN=/usr/sbin/lpadmin
 
 # Variables.
-PRINTER_NAME="Advancement_Office_Xerox_Phaser_6180DN_PS"
-LOCATION="Advancement Office"
-GUI_DISPLAY_NAME="Advancement_Office_Xerox_Phaser_6180DN_PS"
-ADDRESS="lpd://10.0.0.2/Advancement_Office_Xerox_Phaser_6180DN_PS"
-DRIVER_PPD="${PPD_DIR}/Xerox Phaser 6180DN.gz"
+PRINTER_NAME="8th_Grade_Library_HP_LasetJet_P2015dn"
+LOCATION="8th Grade Library"
+GUI_DISPLAY_NAME="8th_Grade_Library_HP_LasetJet_P2015dn"
+ADDRESS="lpd://10.0.0.2/8th_Grade_Library_HP_LasetJet_P2015dn"
+DRIVER_PPD="${PPD_DIR}/HP LaserJet P2015.gz"
 
 # Populate these options if you want to set specific options for the printer. 
 # E.g. duplexing installed, etc.
-OPTION_1="Option3=True"
-OPTION_2="InstalledMemory=128Meg"
-OPTION_3="XRColorMode=Black"
-OPTION_4="PageSize=Letter"
+OPTION_1="HPPaperPolicy=NearestSizeAdjust"
+OPTION_2="HPCollateSupported=False"
+OPTION_3="HPOption_Duplexer=True"
 
 ### Printer Install ###
 
@@ -46,7 +45,7 @@ done
 # In case we are making changes to a printer 
 # we need to remove an existing queue if it exists.
 
-${LPSTAT} -p ${PRINTER_NAME} 2>/dev/null
+${LPSTAT} -p ${PRINTER_NAME}
 if [ $? -eq 0 ]; then
         ${LPADMIN} -x ${PRINTER_NAME}
 fi
@@ -61,7 +60,6 @@ ${LPADMIN} \
         -o "${OPTION_1}" \
         -o "${OPTION_2}" \
         -o "${OPTION_3}" \
-	-o "${OPTION_4}" \
         -o printer-is-shared=false \
         -E
 

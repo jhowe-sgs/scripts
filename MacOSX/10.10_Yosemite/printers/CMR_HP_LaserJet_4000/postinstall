@@ -9,7 +9,7 @@
 
 # Globals
 PPD_DIR="/Library/Printers/PPDs/Contents/Resources"
-DEPLOY_DIR="/private/etc/cups/printers_deployment"
+DEPLOY_DIR="/private/etc/cups/deployed_printers"
 UNINST_DIR="${DEPLOY_DIR}/uninstalls"
 
 LPSTAT=/usr/bin/lpstat
